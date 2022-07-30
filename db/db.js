@@ -2,7 +2,7 @@ const sql = require("sqlite3").verbose();
 
 class DataBaseHandler {
   constructor() {
-    let db = new sql.Database(".hud.db", (err) => {
+    let db = new sql.Database("hud.db", (err) => {
       if (err) {
         return console.error(err.message);
       }
@@ -51,7 +51,41 @@ class DataBaseHandler {
     });
   }
 
-  updatePlayer() {}
+  updatePlayer(player) {
+    //player = steamID, playername, playerimage??? (array or object?)
+    playerExistsSQL =
+      "SELECT playerName FROM players WHERE steamID = '" + player[0] + "'"; //player[0] = players steam ID
+    playerAddSQL =
+      "INSERT INTO players (steamID, playerName, playerImage) VALUES ('" +
+      data[0] +
+      "', '" +
+      data[1] +
+      "', '')";
+    playerUpdateSQL =
+      "UPDATE players SET playerName = '" +
+      data[1] +
+      "' WHERE steamID = '" +
+      data[0] +
+      "'";
+    db.get(playerExistsSQL, [], (err, row) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      if (row === undefined) {
+        db.run(playerAddSQL, (err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+        });
+      } else {
+        db.run(playerUpdateSQL, (err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+        });
+      }
+    });
+  }
 }
 
 module.exports = DataBaseHandler;

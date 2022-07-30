@@ -94,11 +94,11 @@ var gsi = new GameStateIntegration();
 var db = new DataBaseHandler();
 
 gsi.on("all", (newData) => {
-  if (Object.keys(newData).includes("allplayers")) {
-    //if (Object.keys(allplayers).length > 10) {
-    //  allplayers = {};
-    //}
-    /*for (let player of Object.keys(data.allplayers)) {
+  //if (Object.keys(newData).includes("allplayers")) {
+  //if (Object.keys(allplayers).length > 10) {
+  //  allplayers = {};
+  //}
+  /*for (let player of Object.keys(data.allplayers)) {
       if (!Object.keys(players).includes(player)) {
         tempPlayer = db.getPlayer(player);
         if (tempPlayer) {
@@ -111,8 +111,16 @@ gsi.on("all", (newData) => {
         }
       }
     }*/
-  }
+  //}
   //
+
+  /*let playerKeys = Object.keys(newData.allplayers);
+  for (key in playerKeys) {
+    let index = playersArray.findIndex((player) => key === player.steamID); //??
+    if (index === -1) {
+      player = db.getPlayer(key);
+    }
+  }*/
 
   //data
   //add players from array, sides, teams, series, etc
