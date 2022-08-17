@@ -5,6 +5,7 @@ const socketio = require("socket.io");
 const os = require("os");
 const GameStateIntegration = require("./gamestate/gamestate");
 const DataBaseHandler = require("./db/db");
+const ClientHandler = require("./clienthandler/clienthandler");
 const e = require("express");
 
 var hostname = os.hostname();
@@ -92,6 +93,7 @@ io.on("connection", (socket) => {
 
 var gsi = new GameStateIntegration();
 var db = new DataBaseHandler();
+var ch = new ClientHandler();
 
 gsi.on("all", (newData) => {
   //if (Object.keys(newData).includes("allplayers")) {
