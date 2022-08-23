@@ -5,8 +5,8 @@ const http = require("http");
 const sio = require("socket.io");
 
 class ClientHandler extends EventEmitter {
-  constructor() {
-    super();
+  constructor(data) {
+    super(data);
 
     this.app = express();
     this.app.use(cors());
@@ -16,7 +16,20 @@ class ClientHandler extends EventEmitter {
     this.io = sio(this.server, { cors: { origin: "*" } });
 
     this.io.on("connection", (socket) => {
+      socket.emit("data", data);
       console.log("client connected");
+
+      socket.on("swapTeams", () => {
+        this.emit("swapTeams");
+      });
+
+      socket.on("getGames", (data) => {
+        this.emit("games", data);
+      });
+
+      socket.on("getTeams", (teams) => {
+        this.emit("teams", teams);
+      });
 
       socket.on("disconnect", () => {
         console.log("client disconnected");
@@ -28,6 +41,10 @@ class ClientHandler extends EventEmitter {
       console.log("Listening on ip:3001");
     });
   }
+
+  sendData = (data) => {
+    this.io.sockets.emit("data", data);
+  };
 }
 
 module.exports = ClientHandler;

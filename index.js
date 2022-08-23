@@ -22,7 +22,7 @@ const io = socketio(server, {
   },
 });
 
-let dataObject = {
+var dataObject = {
   playerState: {
     team: "ct",
     teamInfo: {},
@@ -72,20 +72,6 @@ let dataObject = {
 let playersArray = [];
 
 io.on("connection", (socket) => {
-  console.log("User Connected");
-
-  socket.on("swapTeams", () => {
-    swapTeams();
-  });
-
-  socket.on("getTeams", (teams) => {
-    //left and right from client
-  });
-
-  socket.on("getSeriesInfo", (seriesInfo) => {
-    //seriesinfo
-  });
-
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });
@@ -93,7 +79,28 @@ io.on("connection", (socket) => {
 
 var gsi = new GameStateIntegration();
 var db = new DataBaseHandler();
-var ch = new ClientHandler();
+var ch = new ClientHandler(dataObject);
+
+ch.on("swapTeams", () => {
+  swapTeams();
+  console.log("Swapping Teams");
+});
+
+ch.on("games", (data) => {
+  dataObject.games = data.games;
+  dataObject.series.bestOf = data.bestOf;
+  //set each teams games wins
+  console.log(dataObject.games);
+  console.log(dataObject.series.bestOf);
+});
+
+ch.on("teams", (teams) => {
+  dataObject.left = teams.left;
+  dataObject.right = teams.right;
+  dataObject.left.image = teams.left.name + ".png";
+  dataObject.right.image = teams.right.name + ".png";
+  console.log(dataObject.left);
+});
 
 gsi.on("all", (newData) => {
   //if (Object.keys(newData).includes("allplayers")) {
@@ -265,6 +272,7 @@ function swapTeams() {
   let temp = dataObject.left;
   dataObject.left = dataObject.right;
   dataObject.right = temp;
+  ch.sendData(dataObject);
 }
 
 function setSeriesInfo() {
