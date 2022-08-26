@@ -88,10 +88,16 @@ ch.on("swapTeams", () => {
 
 ch.on("games", (data) => {
   dataObject.games = data.games;
+  dataObject.left.wins = 0;
+  dataObject.right.wins = 0;
+  for (var key of Object.keys(data.games)) {
+    if (data.games[key].winner === dataObject.left.name) {
+      dataObject.left.wins++;
+    } else if (data.games[key].winner === dataObject.right.name) {
+      dataObject.right.wins++;
+    }
+  }
   dataObject.series.bestOf = data.bestOf;
-  //set each teams games wins
-  console.log(dataObject.games);
-  console.log(dataObject.series.bestOf);
 });
 
 ch.on("teams", (teams) => {
