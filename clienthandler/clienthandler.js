@@ -41,8 +41,8 @@ class ClientHandler extends EventEmitter {
     });
 
     //get local machine ip?
-    this.server.listen(3005, "127.0.0.1", () => {
-      console.log("Listening on ip:3001");
+    this.server.listen(3005, "0.0.0.0", () => {
+      console.log("Listening on ip:3005");
     });
   }
 

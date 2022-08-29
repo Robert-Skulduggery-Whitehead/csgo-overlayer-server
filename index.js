@@ -12,7 +12,7 @@ var hostname = os.hostname();
 //In app, give host name to connect other client machine to host
 
 var app = express();
-app.use(cors);
+app.use(cors());
 
 const server = http.createServer(app);
 
