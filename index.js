@@ -44,6 +44,7 @@ var dataObject = {
     bestOf: 3,
     current: 3,
   },
+  allplayers: {},
   games: {
     game1: {
       map: "mirage",
@@ -69,7 +70,7 @@ var dataObject = {
   },
 };
 
-let playersArray = [];
+let playersObject = [];
 
 io.on("connection", (socket) => {
   socket.on("disconnect", () => {
@@ -108,6 +109,10 @@ ch.on("teams", (teams) => {
   console.log(dataObject.left);
 });
 
+ch.on("player", (player) => {
+  db.updatePlayer([player.id, player.name, player.name + ".png"]);
+});
+
 gsi.on("all", (newData) => {
   //if (Object.keys(newData).includes("allplayers")) {
   //if (Object.keys(allplayers).length > 10) {
@@ -140,6 +145,24 @@ gsi.on("all", (newData) => {
   //data
   //add players from array, sides, teams, series, etc
   //console.log(data);
+
+  if (Object.keys(newData).includes("allplayers")) {
+    for (let key of Object.keys(newData.allplayers)) {
+      let player = db.getPlayer(key);
+      if (player !== undefined) {
+        playersObject[player.id] = {
+          name: player.name,
+          image: player.image,
+        };
+      }
+      if (Object.keys(playersObject).includes(key)) {
+        newData.allplayers[key].name = playersObject[key].name;
+        newData.allplayers[key].image = playersObject[key].image;
+        //console.log(playersObject[key].image === "");
+      }
+    }
+  }
+
   update(newData);
   let data = Object.assign(dataObject, newData);
   io.emit("gameStateData", data);

@@ -31,6 +31,10 @@ class ClientHandler extends EventEmitter {
         this.emit("teams", teams);
       });
 
+      socket.on("getPlayer", (player) => {
+        this.emit("player", player);
+      });
+
       socket.on("disconnect", () => {
         console.log("client disconnected");
       });
