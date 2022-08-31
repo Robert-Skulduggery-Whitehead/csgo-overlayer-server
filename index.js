@@ -145,6 +145,9 @@ gsi.on("all", (newData) => {
   //data
   //add players from array, sides, teams, series, etc
   //console.log(data);
+  if (Object.keys(newData).includes("allplayers" && "team_ct")) {
+    update(newData);
+  }
 
   if (Object.keys(newData).includes("allplayers")) {
     for (let key of Object.keys(newData.allplayers)) {
@@ -157,13 +160,16 @@ gsi.on("all", (newData) => {
       }
       if (Object.keys(playersObject).includes(key)) {
         newData.allplayers[key].name = playersObject[key].name;
-        newData.allplayers[key].image = playersObject[key].image;
+        //newData.allplayers[key].image = playersObject[key].image;
         //console.log(playersObject[key].image === "");
       }
     }
+    if (Object.keys(playersObject).includes(newData.player.steamid)) {
+      newData.player.name = playersObject[newData.player.steamid].name;
+      //newData.player.image = playersObject[newData.player.steamid].imge;
+    }
   }
 
-  update(newData);
   let data = Object.assign(dataObject, newData);
   io.emit("gameStateData", data);
   io.emit("showHUD");
