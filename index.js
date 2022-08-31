@@ -170,6 +170,7 @@ gsi.on("all", (newData) => {
     }
   }
 
+  //console.log(newData.map);
   let data = Object.assign(dataObject, newData);
   io.emit("gameStateData", data);
   io.emit("showHUD");
@@ -304,9 +305,13 @@ function roundSwap(newData) {
 }
 
 function swapTeams() {
+  let left = dataObject.left.side;
+  let right = dataObject.right.side;
   let temp = dataObject.left;
   dataObject.left = dataObject.right;
   dataObject.right = temp;
+  dataObject.left.side = left;
+  dataObject.right.side = right;
   ch.sendData(dataObject);
 }
 
