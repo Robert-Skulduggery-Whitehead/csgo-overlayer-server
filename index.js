@@ -114,42 +114,14 @@ ch.on("player", (player) => {
 });
 
 gsi.on("all", (newData) => {
-  //if (Object.keys(newData).includes("allplayers")) {
-  //if (Object.keys(allplayers).length > 10) {
-  //  allplayers = {};
-  //}
-  /*for (let player of Object.keys(data.allplayers)) {
-      if (!Object.keys(players).includes(player)) {
-        tempPlayer = db.getPlayer(player);
-        if (tempPlayer) {
-          players[player] = {
-            image: tempPlayer.image,
-            name: tempPlayer.name,
-          };
-          data.allplayers[player].name = tempPlayer.name;
-          data.allplayer[player].image = tempPlayer.image;
-        }
-      }
-    }*/
-  //}
-  //
-
-  /*let playerKeys = Object.keys(newData.allplayers);
-  for (key in playerKeys) {
-    let index = playersArray.findIndex((player) => key === player.steamID); //??
-    if (index === -1) {
-      player = db.getPlayer(key);
-    }
-  }*/
-
-  //data
-  //add players from array, sides, teams, series, etc
-  //console.log(data);
-  if (Object.keys(newData).includes("allplayers" && "team_ct")) {
+  if (Object.keys(newData).includes("allplayers")) {
     update(newData);
   }
 
-  if (Object.keys(newData).includes("allplayers")) {
+  if (
+    Object.keys(newData).includes("allplayers") &&
+    Object.keys(newData).includes("team_ct")
+  ) {
     for (let key of Object.keys(newData.allplayers)) {
       let player = db.getPlayer(key);
       if (player !== undefined) {
@@ -180,72 +152,6 @@ server.listen(3001, "127.0.0.1", () => {
   console.log("Listening on 3001");
 });
 
-//Client host through API .js, post and get and such
-
-//Manual stuff like: rounds, etc
-
-//db stuff, create arrays that gets sent over to frontend. allplayers array > 10, reset
-
-/*Data Stuff
-data: {
-  playerState: {
-    team: ct/t,
-    teamInfo: {}, //Needed?
-    bomb: false, //??
-  }
-
-  sides: {
-    left: ct/t,
-    right: ct/t,
-  }
-  teams: {
-    left: {
-      name:
-      image:
-      wins: 
-    }
-    right: {
-      name:
-      image:
-      wins:
-    }
-  }
-  //^^ turns into -->
-  left: {
-    name:
-    image:
-    wins:
-    side: t/ct
-  }
-  right: {
-    name:,
-    image:
-    wins:
-    side: t/ct
-  }
-
-  //
-  series: {
-    bestOf: 1/3/5
-    current: 1, 2, 3, 4, 5
-  }
-  games: {
-    game1: {
-      map:
-      picked
-      winner
-      winnerScore
-      loserScore
-    }
-    game2:...
-  }
-
-  //
-
-}
-
-*/
-
 //functions
 function update(newData) {
   updatePlayerState(newData);
@@ -262,16 +168,16 @@ function updatePlayerState(newData) {
     dataObject.playerState.bomb = false;
   }
 
-  if (player.steamid === 0 || player.steamid > 5) {
-    team = dataObject.right.side;
+  if (player.observer_slot === 0 || player.observer_slot > 5) {
     dataObject.playerState.teamInfo = {
       image: dataObject.right.image,
     };
+    dataObject.playerState.team = dataObject.right.side;
   } else {
-    team = dataObject.left.side;
     dataObject.playerState.teamInfo = {
       image: dataObject.left.image,
     };
+    dataObject.playerState.team = dataObject.left.side;
   }
 }
 
@@ -288,6 +194,7 @@ function setSides(newData) {
   }
 }
 
+//Fix this (previous data from gamestate?)
 function roundSwap(newData) {
   let round = newData.round;
   let map = newData.map;
@@ -313,37 +220,4 @@ function swapTeams() {
   dataObject.left.side = left;
   dataObject.right.side = right;
   ch.sendData(dataObject);
-}
-
-function setSeriesInfo() {
-  //from client
-  /**
-   *   setSeriesInfo(seriesInfo) {
-    this.setState({
-      series: {
-        bestOf: seriesInfo[0],
-        games: seriesInfo[1],
-      },
-    });
-    let tempTeams = this.state.teams;
-    let tempCurrent = 1;
-    for (let game in this.state.games) {
-      if (this.state.games[game].winner === this.state.teams.left.name) {
-        tempTeams.left.wins = tempTeams.left.wins + 1;
-        tempCurrent++;
-      } else if (
-        this.state.games[game].winner === this.state.teams.right.name
-      ) {
-        tempTeams.right.wins = tempTeams.right.wins + 1;
-        tempCurrent++;
-      }
-    }
-    let tempSeries = this.state.series;
-    tempSeries.current = tempCurrent;
-    this.setState({
-      teams: tempTeams,
-      series: tempSeries,
-    });
-  }
-   */
 }
