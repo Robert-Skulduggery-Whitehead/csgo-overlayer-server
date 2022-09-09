@@ -1,4 +1,6 @@
 {
+  "name": "csgo-server",
+  "bin": "index.js",
   "dependencies": {
     "big-integer": "^1.6.51",
     "cors": "^2.8.5",
@@ -17,5 +19,14 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
+  },
+  "pkg": {
+    "assets": [
+      "clienthandler/**/*",
+      "db/**/*",
+      "gamestate/**/*"
+    ],
+    "output": "dist",
+    "targets": [ "latest-win-x64" ]
   }
 }

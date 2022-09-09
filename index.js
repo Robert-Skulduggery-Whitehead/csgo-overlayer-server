@@ -73,8 +73,9 @@ var dataObject = {
 let playersObject = [];
 
 io.on("connection", (socket) => {
+  console.log("overlay connected");
   socket.on("disconnect", () => {
-    console.log("User disconnected");
+    console.log("overlay disconnected");
   });
 });
 
@@ -113,8 +114,26 @@ ch.on("player", (player) => {
   db.updatePlayer([player.id, player.name, player.name + ".png"]);
 });
 
+ch.on("showOverlay", () => {
+  io.emit("showOverlay");
+  console.log("show");
+});
+
+ch.on("hideOverlay", () => {
+  io.emit("hideOverlay");
+  console.log("hide");
+});
+
+ch.on("closeOverlay", () => {
+  io.emit("closeOverlay");
+  console.log("closed");
+});
+
 gsi.on("all", (newData) => {
-  if (Object.keys(newData).includes("allplayers")) {
+  if (
+    Object.keys(newData).includes("allplayers") &&
+    Object.keys(newData).includes("allplayers")
+  ) {
     update(newData);
   }
 
@@ -162,10 +181,12 @@ function update(newData) {
 function updatePlayerState(newData) {
   let player = newData.player;
   let bomb = newData.bomb;
-  if (player.steamid === bomb.player) {
-    dataObject.playerState.bomb = true;
-  } else {
-    dataObject.playerState.bomb = false;
+  if (bomb !== undefined) {
+    if (player.steamid === bomb.player) {
+      dataObject.playerState.bomb = true;
+    } else {
+      dataObject.playerState.bomb = false;
+    }
   }
 
   if (player.observer_slot === 0 || player.observer_slot > 5) {
@@ -185,12 +206,14 @@ function setSides(newData) {
   let allplayers = newData.allplayers;
   let keys = Object.keys(allplayers);
   let player = keys.find((key) => allplayers[key].observer_slot === 1);
-  if (allplayers[player].team === "CT") {
-    dataObject.left.side = "ct";
-    dataObject.right.side = "t";
-  } else {
-    dataObject.left.side = "t";
-    dataObject.right.side = "ct";
+  if (allplayers[player] !== undefined) {
+    if (allplayers[player].team === "CT") {
+      dataObject.left.side = "ct";
+      dataObject.right.side = "t";
+    } else {
+      dataObject.left.side = "t";
+      dataObject.right.side = "ct";
+    }
   }
 }
 

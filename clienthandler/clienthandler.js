@@ -35,6 +35,18 @@ class ClientHandler extends EventEmitter {
         this.emit("player", player);
       });
 
+      socket.on("showOverlay", () => {
+        this.emit("showOverlay");
+      });
+
+      socket.on("hideOverlay", () => {
+        this.emit("hideOverlay");
+      });
+
+      socket.on("closeOverlay", () => {
+        this.emit("closeOverlay");
+      });
+
       socket.on("disconnect", () => {
         console.log("client disconnected");
       });
